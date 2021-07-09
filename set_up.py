@@ -1,0 +1,73 @@
+import pygame.sysfont
+
+from Pieces.King import King
+from Pieces.Queen import Queen
+from Pieces.Bishop import Bishop
+from Pieces.Knight import Knight
+from Pieces.Rook import Rook
+from Pieces.Pawn import Pawn
+from Pieces.Piece import Piece
+
+
+def set_board(board):
+    King(board, team='white')
+    Queen(board, team='white')
+    Bishop(board, team='white', kings_or_queens='kings')
+    Bishop(board, team='white', kings_or_queens='queens')
+    Knight(board, team='white', kings_or_queens='kings')
+    Knight(board, team='white', kings_or_queens='queens')
+    Rook(board, team='white', kings_or_queens='kings')
+    Rook(board, team='white', kings_or_queens='queens')
+    Pawn(board, team='white', start_file='a')
+    Pawn(board, team='white', start_file='b')
+    Pawn(board, team='white', start_file='c')
+    Pawn(board, team='white', start_file='d')
+    Pawn(board, team='white', start_file='e')
+    Pawn(board, team='white', start_file='f')
+    Pawn(board, team='white', start_file='g')
+    Pawn(board, team='white', start_file='h')
+
+    King(board, team='black')
+    Queen(board, team='black')
+    Bishop(board, team='black', kings_or_queens='kings')
+    Bishop(board, team='black', kings_or_queens='queens')
+    Knight(board, team='black', kings_or_queens='kings')
+    Knight(board, team='black', kings_or_queens='queens')
+    Rook(board, team='black', kings_or_queens='kings')
+    Rook(board, team='black', kings_or_queens='queens')
+    Pawn(board, team='black', start_file='a')
+    Pawn(board, team='black', start_file='b')
+    Pawn(board, team='black', start_file='c')
+    Pawn(board, team='black', start_file='d')
+    Pawn(board, team='black', start_file='e')
+    Pawn(board, team='black', start_file='f')
+    Pawn(board, team='black', start_file='g')
+    Pawn(board, team='black', start_file='h')
+
+
+def check_for_result(board):
+    result = None
+    for piece in Piece.All_Pieces:
+        if type(piece).__name__ == 'King':
+            if piece.is_in_checkmate(board):
+                if piece.team == 'white':
+                    result = 'Black Wins'
+                else:
+                    result = 'White Wins'
+            if piece.is_in_stalemate(board):
+                result = 'Tie'
+    if result is None:
+        return None
+    return result
+
+
+def display_result(screen, result):
+    if result is None:
+        return None
+    font = pygame.font.SysFont('Arial', 20, bold=True)
+    img = font.render(result, True, (200, 200, 200))
+
+    screen.blit(img, (20, 20))
+    pygame.display.flip()
+    return result
+

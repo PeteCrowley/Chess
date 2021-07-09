@@ -115,7 +115,7 @@ class Piece(pygame.sprite.Sprite):
                 self.pos = old_pos
                 return False
 
-    def is_observed(self, square):
+    def is_observed(self, square, return_piece=False):
         if self.team == 'white':
             opp_piece_list = Piece.Black_Piece_List
         else:
@@ -124,9 +124,26 @@ class Piece(pygame.sprite.Sprite):
             observed_squares = piece.get_legal_moves(all_observed=True)
             for sqr in observed_squares:
                 if sqr == square:
+                    if return_piece:
+                        return piece
                     return True
         return False
 
+    def is_protected(self, square, return_piece=False):
+        if self.team == 'white':
+            team_piece_list = Piece.White_Piece_List
+        else:
+            team_piece_list = Piece.Black_Piece_List
+        for piece in team_piece_list:
+            if piece is self:
+                continue
+            observed_squares = piece.get_legal_moves(all_observed=True)
+            for sqr in observed_squares:
+                if sqr == square:
+                    if return_piece:
+                        return piece
+                    return True
+        return False
 
 def square_empty(square):
     for piece in Piece.All_Pieces:

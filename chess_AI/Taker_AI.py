@@ -1,4 +1,4 @@
-from Pieces.Piece import get_piece_on_square
+from chess_AI.Defense_AI import should_take
 
 def taker(legal_move_list):
     captures = []
@@ -25,10 +25,3 @@ def smart_taker(legal_move_list):
             captures.append((piece, piece_captures))
     return captures
 
-
-def should_take(piece, square):
-    if not piece.is_observed(square):
-        return True
-    if piece.value <= get_piece_on_square(square).value:
-        return True
-    return False

@@ -31,7 +31,7 @@ class Bishop(Piece):
         directions = ['NE', 'SE', 'SW', 'NW']
         for dr in directions:
             blocked = False
-            for i in range(1, 7):
+            for i in range(1, 8):
                 if blocked:
                     continue
                 square = None

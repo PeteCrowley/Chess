@@ -27,7 +27,7 @@ class Queen(Piece):
                       'S', 'SW', 'W', 'NW']
         for dr in directions:
             blocked = False
-            for i in range(1, 7):
+            for i in range(1, 8):
                 if blocked:
                     continue
                 square = None

@@ -142,8 +142,7 @@ class King(Piece):
         else:
             can_take = self.can_take(square)
             if can_take:
-                piece = get_piece_on_square(square)
-                self.take(piece)
+                self.take(square)
                 move_count += 1
                 return move_count
         return move_count

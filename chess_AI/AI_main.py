@@ -2,6 +2,7 @@ from Pieces.Piece import Piece
 import random
 import time
 from chess_AI import Taker_AI
+from chess_AI.Defense_AI import safe_mover
 
 
 def get_all_legal_moves(team):
@@ -26,9 +27,12 @@ def random_move(move_list, move_count):
 
 
 def good_move(legal_move_list, move_count):
-    captures = Taker_AI.smart_taker(legal_move_list)
-    if captures != []:
-        move_list = captures
+    good_captures = Taker_AI.smart_taker(legal_move_list)
+    good_moves = safe_mover(legal_move_list)
+    if good_captures != []:
+        move_list = good_captures
+    elif good_moves != []:
+        move_list = good_moves
     else:
         move_list = legal_move_list
     return random_move(move_list, move_count)

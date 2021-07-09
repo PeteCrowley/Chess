@@ -1,5 +1,5 @@
 import pygame
-from Pieces.Piece import Piece
+from Pieces.Piece import Piece, get_piece_on_square, square_empty
 
 
 class King(Piece):
@@ -16,7 +16,7 @@ class King(Piece):
         else:
             self.image = pygame.transform.scale(King.BLACK_IMAGE, self.size)
 
-    def get_legal_moves(self, board, all_observed=False):
+    def get_legal_moves(self, all_observed=False):
         square = None
         if self.is_taken:
             return []
@@ -42,22 +42,22 @@ class King(Piece):
                 square = (x - 1, y)
             elif dr == 'NW':
                 square = (x - 1, y + 1)
-            if square not in board.squares:
+            if square not in self.board.squares:
                 continue
             if all_observed:
                 moves.append(square)
                 continue
-            if not self.can_move(square) and not self.can_take(square)[0]:
+            if not square_empty(square) and not self.can_take(square):
                 continue
-            if self.is_king_in_check_after_move(board, square):
+            if self.is_king_in_check_after_move(square):
                 continue
             moves.append(square)
         if all_observed:
             moves.append(square)
             return moves
-        if self.can_castle_kingside(board):
+        if self.can_castle_kingside():
             moves.append((7, self.start_rank))
-        if self.can_castle_queenside(board):
+        if self.can_castle_queenside():
             moves.append((3, self.start_rank))
         return moves
 
@@ -69,104 +69,93 @@ class King(Piece):
             self.pos = (3, self.start_rank)
             rook.pos = (4, self.start_rank)
 
-    def can_castle_kingside(self, board):
+    def can_castle_kingside(self):
         if self.has_moved:
             return False
-        if self.is_in_check(board):
+        if self.is_in_check():
             return False
         castle_squares = [(6, self.start_rank), (7, self.start_rank)]
         for piece in Piece.All_Pieces:
             if piece.pos in castle_squares:
                 return False
         for square in castle_squares:
-            if self.is_observed(board, square):
+            if self.is_observed(square):
                 return False
         return True
 
-    def can_castle_queenside(self, board):
+    def can_castle_queenside(self):
         if self.has_moved:
             return False
-        if self.is_in_check(board):
+        if self.is_in_check():
             return False
         castle_squares = [(2, self.start_rank), (3, self.start_rank), (4, self.start_rank)]
         for piece in Piece.All_Pieces:
             if piece.pos in castle_squares:
                 return False
         for square in castle_squares:
-            if self.is_observed(board, square):
+            if self.is_observed(square):
                 return False
         return True
 
-    def is_in_check(self, board):
-        return self.is_observed(board, self.pos)
+    def is_in_check(self):
+        return self.is_observed(self.pos)
 
-    def is_in_checkmate(self, board):
+    def is_in_checkmate(self):
         if self.team == 'white':
             piece_list = Piece.White_Piece_List
         else:
             piece_list = Piece.Black_Piece_List
-        if not self.is_in_check(board):
+        if not self.is_in_check():
             return False
         for piece in piece_list:
-            if piece.get_legal_moves(board) != []:
+            if piece.get_legal_moves() != []:
                 return False
         return True
 
-    def move(self, board, square, move_count):
-        if square not in self.get_legal_moves(board):
+    def move(self, square, move_count):
+        if square not in self.get_legal_moves():
             return move_count
         if self.team == 'white':
             piece_list = Piece.White_Piece_List
         else:
             piece_list = Piece.Black_Piece_List
-        if self.can_castle_kingside(board) and square == (7, self.start_rank):
+        if self.can_castle_kingside() and square == (7, self.start_rank):
             self.castle(piece_list[6])
             self.has_moved = True
             move_count += 1
-        elif self.can_castle_queenside(board) and square == (3, self.start_rank):
+        elif self.can_castle_queenside() and square == (3, self.start_rank):
             self.castle(piece_list[7])
             self.has_moved = True
             move_count += 1
-        elif self.can_move(square):
+        elif square_empty(square):
             self.pos = square
             self.has_moved = True
             move_count += 1
         else:
-            can_take, piece = self.can_take(square)
+            can_take = self.can_take(square)
             if can_take:
+                piece = get_piece_on_square(square)
                 self.take(piece)
                 move_count += 1
                 return move_count
         return move_count
 
-    def is_observed(self, board, square):
-        if self.team == 'white':
-            opp_piece_list = Piece.Black_Piece_List
-        else:
-            opp_piece_list = Piece.White_Piece_List
-        for piece in opp_piece_list:
-            observed_squares = piece.get_legal_moves(board, all_observed=True)
-            for sqr in observed_squares:
-                if sqr == square:
-                    return True
-        return False
-
-    def is_in_stalemate(self, board):
-        if self.is_in_checkmate(board):
+    def is_in_stalemate(self):
+        if self.is_in_checkmate():
             return False
         if self.team == 'white':
             piece_list = Piece.White_Piece_List
         else:
             piece_list = Piece.Black_Piece_List
         for piece in piece_list:
-            if piece.get_legal_moves(board) != []:
+            if piece.get_legal_moves() != []:
                 return False
         return True
 
-    def is_king_in_check_after_move(self, board, square):
+    def is_king_in_check_after_move(self, square):
         old_pos = self.pos
         self.pos = square
-        if self.is_in_check(board):
+        if self.is_in_check():
             self.pos = old_pos
             return True
         else:

@@ -1,5 +1,5 @@
 import pygame
-from Pieces.Piece import Piece
+from Pieces.Piece import Piece, square_empty
 
 
 class Knight(Piece):
@@ -21,8 +21,9 @@ class Knight(Piece):
         else:
             self.image = pygame.transform.scale(Knight.BLACK_IMAGE, self.size)
         self.pos = self.start_square
+        self.value = 3
 
-    def get_legal_moves(self, board, all_observed=False):
+    def get_legal_moves(self, all_observed=False):
         if self.is_taken:
             return []
         moves = []
@@ -30,14 +31,10 @@ class Knight(Piece):
                      (1, -2), (1, 2), (2, -1), (2, 1)]
         for x, y in move_list:
             square = (self.pos[0] + x, self.pos[1] + y)
-            if square not in board.squares:
+            if square not in self.board.squares:
                 continue
             if all_observed:
                 moves.append(square)
-                continue
-            if not self.can_move(square) and not self.can_take(square)[0]:
-                continue
-            if self.is_king_in_check_after_move(board, square):
-                continue
-            moves.append(square)
+            elif (square_empty(square) or self.can_take(square)) and not self.is_king_in_check_after_move(square):
+                moves.append(square)
         return moves

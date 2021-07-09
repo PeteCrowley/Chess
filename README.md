@@ -2,8 +2,10 @@
 #
 # Directions to Run Code:
 # 1. Download All Files
-# 2. Run command pip3 install -r requirements.txt
-# 2. Run main.py file
+# 2. Open a command prompt or terminal
+# 3. Use the cd command to navigate to the directory containing the file "start.sh"
+# 4. Enter command: zsh start.sh
+
 #
 # Info:
 # A chess game in pygame

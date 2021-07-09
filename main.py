@@ -75,10 +75,10 @@ while running:
     if result is not None:
         game_over = True
 
-    if turn == 'black' and not game_over:
-        all_moves = AI_main.get_all_legal_moves(board, 'black')
-        move_count = AI_main.random_move(board, all_moves, move_count)
+    # if turn == 'black' and not game_over:
+    #     all_moves = AI_main.get_all_legal_moves(board, 'black')
+    #     move_count = AI_main.random_move(board, all_moves, move_count)
 
-    elif turn == 'white' and not game_over:
-        all_moves = AI_main.get_all_legal_moves(board, 'white')
-        move_count = AI_main.random_move(board, all_moves, move_count)
+    # elif turn == 'white' and not game_over:
+    #     all_moves = AI_main.get_all_legal_moves(board, 'white')
+    #     move_count = AI_main.random_move(board, all_moves, move_count)

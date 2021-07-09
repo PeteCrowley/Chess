@@ -70,9 +70,13 @@ class King(Piece):
             rook.pos = (4, self.start_rank)
 
     def can_castle_kingside(self):
+        rook_square = (8, self.start_rank)
+        rook = get_piece_on_square(rook_square)
         if self.has_moved:
             return False
         if self.is_in_check():
+            return False
+        if rook is None or type(rook).__name__ != 'Rook':
             return False
         castle_squares = [(6, self.start_rank), (7, self.start_rank)]
         for piece in Piece.All_Pieces:
@@ -84,9 +88,13 @@ class King(Piece):
         return True
 
     def can_castle_queenside(self):
+        rook_square = (1, self.start_rank)
+        rook = get_piece_on_square(rook_square)
         if self.has_moved:
             return False
         if self.is_in_check():
+            return False
+        if rook is None or type(rook).__name__ != 'Rook':
             return False
         castle_squares = [(2, self.start_rank), (3, self.start_rank), (4, self.start_rank)]
         for piece in Piece.All_Pieces:

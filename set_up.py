@@ -45,16 +45,16 @@ def set_board(board):
     Pawn(board, team='black', start_file='h')
 
 
-def check_for_result(board):
+def check_for_result(turn):
     result = None
     for piece in Piece.All_Pieces:
         if type(piece).__name__ == 'King':
-            if piece.is_in_checkmate(board):
+            if piece.is_in_checkmate():
                 if piece.team == 'white':
                     result = 'Black Wins'
                 else:
                     result = 'White Wins'
-            if piece.is_in_stalemate(board):
+            if piece.is_in_stalemate() and turn == piece.team:
                 result = 'Tie'
     if result is None:
         return None

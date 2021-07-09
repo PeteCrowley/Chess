@@ -1,5 +1,5 @@
 import pygame
-from Pieces.Piece import Piece
+from Pieces.Piece import Piece, square_empty
 
 
 class Rook(Piece):
@@ -21,8 +21,9 @@ class Rook(Piece):
         else:
             self.image = pygame.transform.scale(Rook.BLACK_IMAGE, self.size)
         self.pos = self.start_square
+        self.value = 5
 
-    def get_legal_moves(self, board, all_observed=False):
+    def get_legal_moves(self, all_observed=False):
         if self.is_taken:
             return []
         moves = []
@@ -42,20 +43,12 @@ class Rook(Piece):
                     square = (x, y - i)
                 elif dr == 'W':
                     square = (x - i, y)
-                if square not in board.squares:
+                if square not in self.board.squares:
                     continue
                 if all_observed:
-                    if not self.can_move(square):
-                        blocked = True
                     moves.append(square)
-                    continue
-                if not self.can_move(square) and not self.can_take(square)[0]:
-                    if not self.can_move(square):
-                        blocked = True
-                    continue
-                if self.is_king_in_check_after_move(board, square):
-                    continue
-                if not self.can_move(square):
+                elif (square_empty(square) or self.can_take(square)) and not self.is_king_in_check_after_move(square):
+                    moves.append(square)
+                if not square_empty(square):
                     blocked = True
-                moves.append(square)
         return moves

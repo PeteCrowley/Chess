@@ -1,5 +1,5 @@
 import pygame
-from Pieces.Piece import Piece
+from Pieces.Piece import Piece, square_empty
 from Pieces.Queen import Queen
 
 
@@ -27,6 +27,7 @@ class Pawn(Piece):
         else:
             self.image = pygame.transform.scale(Pawn.BLACK_IMAGE, self.size)
         self.en_passant_square = None
+        self.value = 1
 
     def set_start_pos(self):
         if self.start_file == "a":
@@ -50,7 +51,7 @@ class Pawn(Piece):
         else:
             self.start_rank -= 1
 
-    def get_legal_moves(self, board, all_observed=False):
+    def get_legal_moves(self, all_observed=False):
         if self.is_taken:
             return []
         moves = []
@@ -65,34 +66,34 @@ class Pawn(Piece):
             moves.append((x - 1, y + num))
             return moves
         square = (x, y + num)
-        if self.can_move(square) and not self.is_king_in_check_after_move(board, square):
+        if square_empty(square) and not self.is_king_in_check_after_move(square):
             moves.append(square)
         square = (x + num, y + num)
-        if (self.can_take(square)[0] and not self.is_king_in_check_after_move(board, square))\
+        if (self.can_take(square) and not self.is_king_in_check_after_move(square))\
                 or square == Piece.En_Passant_Square:
             moves.append(square)
         square = (x - num, y + num)
-        if self.can_take(square)[0] and not self.is_king_in_check_after_move(board, square)\
+        if self.can_take(square) and not self.is_king_in_check_after_move(square)\
                 or square == Piece.En_Passant_Square:
             moves.append(square)
         square = (x, y + 2 * num)
         if ((num == 1 and y == 2) or (num == -1 and y == 7)) \
-                and self.can_move(square) and self.can_move((square[0], square[1]-num)) \
-                and not self.is_king_in_check_after_move(board, square):
+                and square_empty(square) and square_empty((square[0], square[1]-num)) \
+                and not self.is_king_in_check_after_move(square):
             moves.append(square)
         return moves
 
-    def move(self, board, square, move_count):
+    def move(self, square, move_count):
         old_move_count = move_count
         x = self.pos[0]
         y = self.pos[1]
         if square[1] - y == 2:
-            move_count = super().move(board, square, move_count)
+            move_count = super().move(square, move_count)
             if old_move_count == move_count + 1:
                 Piece.En_Passant_Square = (x, y - 1)
                 Piece.En_Passant_Pawn = self
         elif square[1] - y == -2:
-            move_count = super().move(board, square, move_count)
+            move_count = super().move(square, move_count)
             if old_move_count == move_count - 1:
                 Piece.En_Passant_Square = (x, y-1)
                 Piece.En_Passant_Pawn = self
@@ -102,12 +103,12 @@ class Pawn(Piece):
             Piece.En_Passant_Pawn.is_taken = True
             move_count += 1
         else:
-            move_count = super().move(board, square, move_count)
+            move_count = super().move(square, move_count)
         if self.pos[1] == 8 or self.pos[1] == 1:
-            self.promote(board, square)
+            self.promote(square)
         return move_count
 
-    def promote(self, board, square):
+    def promote(self, square):
         self.is_taken = True
-        queen = Queen(board, team=self.team)
+        queen = Queen(self.board, team=self.team)
         queen.pos = square

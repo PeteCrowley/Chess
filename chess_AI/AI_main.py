@@ -2,7 +2,8 @@ from Pieces.Piece import Piece
 import random
 import time
 from chess_AI import Taker_AI
-from chess_AI.Defense_AI import safe_mover
+from chess_AI.Defense_AI import safe_mover, safe_move_score, get_take_score
+from chess_AI.Attack_AI import is_checkmate_after_move, is_check_after_move
 
 
 def get_all_legal_moves(team):
@@ -19,14 +20,19 @@ def get_all_legal_moves(team):
 
 
 def random_move(move_list, move_count):
-    time.sleep(0.1)
     piece, moves = random.choice(move_list)
     move = random.choice(moves)
+    time.sleep(1)
     move_count = piece.move(move, move_count)
     return move_count
 
 
 def good_move(legal_move_list, move_count):
+    if move_count >= 3:
+        for piece, moves in legal_move_list:
+            for move in moves:
+                if is_checkmate_after_move(piece, move):
+                    return piece.move(move, move_count)
     good_captures = Taker_AI.smart_taker(legal_move_list)
     good_moves = safe_mover(legal_move_list)
     if good_captures != []:
@@ -38,6 +44,29 @@ def good_move(legal_move_list, move_count):
     return random_move(move_list, move_count)
 
 
+def get_move_score(piece, move):
+    score = 0
+    score += safe_move_score(piece, move)
+    score += get_take_score(piece, move)
+    score += is_check_after_move(piece, move)
+    score += is_checkmate_after_move(piece, move)
+    return score
+
+
+def move_by_score(legal_move_list, move_count):
+    scored_move_list = []
+    for piece, moves in legal_move_list:
+        for move in moves:
+            score = get_move_score(piece, move)
+            scored_move_list.append((score, (piece, move)))
+    random.shuffle(scored_move_list)
+    scored_move_list.sort(key=lambda x: x[0], reverse=True)
+    piece, best_move = scored_move_list[0][1]
+    move_count = piece.move(best_move, move_count)
+    return move_count
+
+
 def AI_Move(team, move_count):
+    time.sleep(0.1)
     moves = get_all_legal_moves(team)
-    return good_move(moves, move_count)
+    return move_by_score(moves, move_count)

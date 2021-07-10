@@ -15,6 +15,7 @@ class King(Piece):
             self.image = pygame.transform.scale(King.WHITE_IMAGE, self.size)
         else:
             self.image = pygame.transform.scale(King.BLACK_IMAGE, self.size)
+        self.value = 99
 
     def get_legal_moves(self, all_observed=False):
         square = None

@@ -73,9 +73,9 @@ while running:
     result = display_result(screen, check_for_result(turn))
     if result is not None:
         game_over = True
-    #
+
     if turn == 'black' and not game_over:
         move_count = AI_Move(turn, move_count)
-    #
+
     # elif turn == 'white' and not game_over:
     #     move_count = AI_Move(turn, move_count)

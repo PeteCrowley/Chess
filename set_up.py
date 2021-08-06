@@ -45,6 +45,11 @@ def set_board(board):
     Pawn(board, team='black', start_file='h')
 
 
+def reset_board():
+    for piece in Piece.All_Pieces:
+        piece.is_taken = False
+        piece.pos = piece.start_square
+
 def check_for_result(turn):
     result = None
     for piece in Piece.All_Pieces:
@@ -61,13 +66,13 @@ def check_for_result(turn):
     return result
 
 
-def display_result(screen, result):
+def display_result(screen, board, result):
     if result is None:
         return None
-    font = pygame.font.SysFont('Arial', 20, bold=True)
-    img = font.render(result, True, (200, 200, 200))
-
-    screen.blit(img, (20, 20))
+    font = pygame.font.SysFont('Arial', 50, bold=True)
+    img = font.render(result, True, (200, 50, 50))
+    pos = (board.start_pos[0] + board.size//2 - board.square_size*2, board.start_pos[1] + board.size//2 - board.square_size//2)
+    screen.blit(img, pos)
     pygame.display.flip()
     return result
 

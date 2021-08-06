@@ -2,9 +2,9 @@ import pygame
 from Pieces.Piece import Piece
 from Pieces.Piece import show_all_pieces
 from Board import Board
-from set_up import set_board, check_for_result, display_result
+from set_up import set_board, check_for_result, display_result, reset_board
 from chess_AI.AI_main import AI_Move
-
+from Determine_Players import show_player_buttons
 
 pygame.init()
 
@@ -19,11 +19,19 @@ BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 BLUE = (0, 100, 204)
 
-board = Board(size=600)
+board = Board(WIDTH, HEIGHT)
 set_board(board)
 
 
 mouse_rect = pygame.rect.Rect(0, 0, 3, 3)
+
+play_again_button = pygame.rect.Rect((620, 10), (60, 20))
+white_player_rect = pygame.rect.Rect((330, 670), (60, 20))
+black_player_rect = pygame.rect.Rect((330, 10), (60, 20))
+
+white_is_AI = False
+black_is_AI = True
+
 clicked_piece = None
 move_count = 0
 
@@ -43,6 +51,12 @@ while running:
             if event.button == pygame.BUTTON_LEFT:
                 pos = pygame.mouse.get_pos()
                 mouse_rect.center = pos
+                if mouse_rect.colliderect(white_player_rect):
+                    white_is_AI = not white_is_AI
+                elif mouse_rect.colliderect(black_player_rect):
+                    black_is_AI = not black_is_AI
+                elif mouse_rect.colliderect(play_again_button):
+                    reset_board()
                 if turn == 'white':
                     piece_list = Piece.White_Piece_List
                 else:
@@ -64,18 +78,21 @@ while running:
     screen.fill(BLUE)
     board.draw_board(screen)
     show_all_pieces(screen)
+    show_player_buttons(screen, board, white_is_AI, black_is_AI, white_player_rect, black_player_rect, play_again_button)
     if clicked_piece:
         clicked_piece.show_piece(screen)
 
-    if not game_over:
-        pygame.display.flip()
-
-    result = display_result(screen, check_for_result(turn))
+    result = display_result(screen, board, check_for_result(turn))
     if result is not None:
         game_over = True
 
-    if turn == 'black' and not game_over:
+    pygame.display.flip()
+
+    if turn == 'black' and not game_over and black_is_AI:
         move_count = AI_Move(turn, move_count)
 
-    elif turn == 'white' and not game_over:
+    elif turn == 'white' and not game_over and white_is_AI:
         move_count = AI_Move(turn, move_count)
+
+
+

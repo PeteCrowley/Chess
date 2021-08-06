@@ -49,6 +49,8 @@ def reset_board():
     for piece in Piece.All_Pieces:
         piece.is_taken = False
         piece.pos = piece.start_square
+    return False, 0, [save_position()]
+
 
 def check_for_result(turn):
     result = None

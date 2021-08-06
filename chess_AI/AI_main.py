@@ -62,6 +62,7 @@ def move_by_score(legal_move_list, move_count):
     random.shuffle(scored_move_list)
     scored_move_list.sort(key=lambda x: x[0], reverse=True)
     piece, best_move = scored_move_list[0][1]
+    print(safe_move_score(piece, best_move))
     move_count = piece.move(best_move, move_count)
     return move_count
 

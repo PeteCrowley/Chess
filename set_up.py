@@ -76,3 +76,38 @@ def display_result(screen, board, result):
     pygame.display.flip()
     return result
 
+
+def save_position():
+    saved_pos = {}
+    for piece in Piece.All_Pieces:
+        saved_pos[piece] = piece.pos, piece.is_taken, piece.has_moved
+    return saved_pos
+
+
+def restore_position(saved_pos):
+    for piece in saved_pos:
+        piece.pos = saved_pos[piece][0]
+        piece.is_taken = saved_pos[piece][1]
+        piece.has_moved = saved_pos[piece][2]
+    return
+
+
+def back_one_move(move_num, pos_history):
+    move_num -= 1
+    if move_num == -1:
+        return 0, True
+    pos = pos_history[move_num]
+    restore_position(pos)
+    return move_num, True
+
+
+def forward_one_move(move_num, pos_history):
+    move_num += 1
+    if move_num >= len(pos_history):
+        return move_num-1, False
+    if move_num == len(pos_history)-1:
+        restore_position(pos_history[move_num])
+        return move_num, False
+    restore_position(pos_history[move_num])
+    return move_num, True
+

@@ -1,6 +1,7 @@
 from Pieces.Piece import get_piece_on_square, Piece
 import time
 
+
 def safe_mover(legal_move_list):
     safe_moves = []
     for piece, moves in legal_move_list:
@@ -14,10 +15,14 @@ def safe_mover(legal_move_list):
 
 
 def safe_move_score(piece, square):
+    if piece.team == 'white':
+        piece_list = Piece.White_Piece_List
+    else:
+        piece_list = Piece.Black_Piece_List
     score = 0
     old_pos = piece.pos
     piece.pos = square
-    for hanging_piece in Piece.Black_Piece_List:
+    for hanging_piece in piece_list:
         move_score = 0
         if type(hanging_piece).__name__ == "King":
             continue
@@ -33,7 +38,7 @@ def safe_move_score(piece, square):
         if move_score < score:
             score = move_score
     piece.pos = old_pos
-    return score
+    return score * 10
 
 
 def get_take_score(piece, square):

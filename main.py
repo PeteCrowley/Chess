@@ -2,7 +2,7 @@ import pygame
 from Pieces.Piece import Piece
 from Pieces.Piece import show_all_pieces
 from Board import Board
-from set_up import set_board, check_for_result, display_result, reset_board
+from set_up import set_board, check_for_result, display_result, reset_board, save_position, back_one_move, forward_one_move
 from chess_AI.AI_main import AI_Move
 from Determine_Players import show_player_buttons
 
@@ -34,10 +34,13 @@ black_is_AI = True
 
 clicked_piece = None
 move_count = 0
+move_num = 0
+position_history = [save_position()]
 
 
 running = True
 game_over = False
+frozen = False
 while running:
     CLOCK.tick(FPS)
     if move_count % 2 == 0:
@@ -47,7 +50,7 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-        elif event.type == pygame.MOUSEBUTTONDOWN:
+        elif event.type == pygame.MOUSEBUTTONDOWN and not frozen:
             if event.button == pygame.BUTTON_LEFT:
                 pos = pygame.mouse.get_pos()
                 mouse_rect.center = pos
@@ -72,9 +75,21 @@ while running:
                 for square in board.squares:
                     hitbox = board.squares[square]
                     if mouse_rect.colliderect(hitbox):
+                        old_move_count = move_count
                         move_count = clicked_piece.move(square, move_count)
+                        if move_count > old_move_count:
+                            position_history.append(save_position())
                 clicked_piece.is_clicked = False
                 clicked_piece = None
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_LEFT:
+                if not frozen:
+                    move_num = move_count
+                move_num, frozen = back_one_move(move_num, position_history)
+            elif event.key == pygame.K_RIGHT:
+                if not frozen:
+                    move_num = move_count
+                move_num, frozen = forward_one_move(move_num, position_history)
     screen.fill(BLUE)
     board.draw_board(screen)
     show_all_pieces(screen)
@@ -86,13 +101,16 @@ while running:
     if result is not None:
         game_over = True
 
+
     pygame.display.flip()
 
     if turn == 'black' and not game_over and black_is_AI:
         move_count = AI_Move(turn, move_count)
+        position_history.append(save_position())
 
     elif turn == 'white' and not game_over and white_is_AI:
         move_count = AI_Move(turn, move_count)
+        position_history.append(save_position())
 
 
 

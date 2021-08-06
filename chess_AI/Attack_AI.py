@@ -15,7 +15,7 @@ def is_checkmate_after_move(piece, square):
         needs_to_take.is_taken = True
     piece.pos = square
     if king.is_in_checkmate():
-        score = 999
+        score = 999999
     else:
         score = 0
     piece.pos = old_pos
@@ -38,7 +38,7 @@ def is_check_after_move(piece, square):
         needs_to_take.is_taken = True
     piece.pos = square
     if king.is_in_check():
-        score = 0
+        score = 1
     else:
         score = 0
     piece.pos = old_pos

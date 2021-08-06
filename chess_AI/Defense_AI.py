@@ -48,4 +48,4 @@ def get_take_score(piece, square):
         take_score = observing_piece.value + taken_piece.value - piece.value
     else:
         take_score = taken_piece.value - piece.value
-    return take_score
+    return take_score * 10

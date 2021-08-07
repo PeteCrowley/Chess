@@ -55,7 +55,7 @@ def reset_board():
 def check_for_result(turn):
     result = None
     for piece in Piece.All_Pieces:
-        if type(piece).__name__ == 'King':
+        if type(piece).__name__ == 'King' or type(piece).__name__ == 'MonsterKing':
             if piece.is_in_checkmate():
                 if piece.team == 'white':
                     result = 'Black Wins'
@@ -112,4 +112,6 @@ def forward_one_move(move_num, pos_history):
         return move_num, False
     restore_position(pos_history[move_num])
     return move_num, True
+
+
 

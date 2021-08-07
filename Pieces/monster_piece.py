@@ -1,33 +1,13 @@
 import pygame
+from Pieces.Piece import Piece
 
 
-class Piece(pygame.sprite.Sprite):
-    All_Pieces = []
-    White_Piece_List = []
-    Black_Piece_List = []
-    BLACK_RANK = 8
-    WHITE_RANK = 1
-    En_Passant_Square = None
-    En_Passant_Pawn = None
+class MonsterPiece(Piece):
+
+    move_num = 0
 
     def __init__(self, board, team):
-        super().__init__()
-        self.__class__.All_Pieces.append(self)
-        self.team = team
-        if self.team == 'white':
-            self.__class__.White_Piece_List.append(self)
-            self.start_rank = Piece.WHITE_RANK
-        else:
-            self.__class__.Black_Piece_List.append(self)
-            self.start_rank = Piece.BLACK_RANK
-        self.pos = None
-        self.size = board.square_size, board.square_size
-        self.rect = pygame.Rect((0, 0), self.size)
-        self.hitbox = pygame.Rect((0, 0), (board.square_size*8//10, board.square_size*8//10,))
-        self.is_clicked = False
-        self.is_taken = False
-        self.has_moved = False
-        self.board = board
+        super().__init__(board, team)
 
     def show_piece(self, screen):
         if self.is_clicked:
@@ -66,6 +46,7 @@ class Piece(pygame.sprite.Sprite):
         else:
             if self.can_take(square):
                 self.take(square)
+                MonsterPiece.move_num = (MonsterPiece.move_num + 1) % 2
                 move_count += 1
                 Piece.En_Passant_Square = None
                 Piece.En_Passant_Pawn = None
@@ -86,7 +67,12 @@ class Piece(pygame.sprite.Sprite):
                                self.board.circle_radius)
 
     def get_legal_moves(self, all_observed=False):
-        return []
+        if all_observed:
+            return self.get_observed()
+        elif MonsterPiece.move_num == 0:
+            return self.get_monster_move_1()
+        elif MonsterPiece.move_num == 1:
+            return self.get_monster_move_2()
 
     def is_king_in_check_after_move(self, square):
         old_pos = self.pos
@@ -122,8 +108,6 @@ class Piece(pygame.sprite.Sprite):
             opp_piece_list = Piece.White_Piece_List
         for piece in opp_piece_list:
             observed_squares = piece.get_legal_moves(all_observed=True)
-            if not observed_squares:
-                return False
             for sqr in observed_squares:
                 if sqr == square:
                     if return_piece:
@@ -147,6 +131,35 @@ class Piece(pygame.sprite.Sprite):
                     return True
         return False
 
+    def get_monster_move_1(self):
+        return 'movelist'
+
+    def get_monster_move_2(self):
+        return 'movelist'
+
+    def get_observed(self):
+        return 'movelist'
+
+    def legal_moves_after_move_1(self, square):
+        old_pos = self.pos
+        needs_to_take = get_piece_on_square(square)
+        if needs_to_take:
+            taken_piece_old_pos = needs_to_take.pos
+            needs_to_take.pos = (0, 0)
+            needs_to_take.is_taken = True
+        self.pos = square
+        for piece in Piece.White_Piece_List:
+            if piece.get_monster_move_2():
+                self.pos = old_pos
+                if needs_to_take:
+                    needs_to_take.pos = taken_piece_old_pos
+                    needs_to_take.is_taken = False
+                return True
+        self.pos = old_pos
+        if needs_to_take:
+            needs_to_take.pos = taken_piece_old_pos
+            needs_to_take.is_taken = False
+        return False
 
 def square_empty(square):
     for piece in Piece.All_Pieces:

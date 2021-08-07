@@ -46,13 +46,16 @@ def set_board(board):
 
 
 def reset_board():
-    for piece in Piece.All_Pieces:
-        if type(piece).__name__ == 'PQueen':
+    for i in range(len(Piece.All_Pieces)):
+        piece = Piece.All_Pieces[i]
+        if i > 31:
             piece.is_taken = True
-            Piece.All_Pieces.remove(piece)
             continue
         piece.is_taken = False
         piece.pos = piece.start_square
+    Piece.All_Pieces = Piece.All_Pieces[:32]
+    Piece.White_Piece_List = Piece.White_Piece_List[:16]
+    Piece.Black_Piece_List = Piece.Black_Piece_List[:16]
 
 
 def check_for_result(turn, pos_dict):

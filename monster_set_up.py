@@ -34,12 +34,15 @@ def monster_set_up(board):
     Pawn(board, team='black', start_file='g')
     Pawn(board, team='black', start_file='h')
 
+
 def monster_reset():
-    for piece in Piece.All_Pieces:
-        if type(piece).__name__ == 'MonsterQueen' or type(piece).__name__ == 'PQueen':
+    for i in range(len(Piece.All_Pieces)):
+        piece = Piece.All_Pieces[i]
+        if i > 20:
             piece.is_taken = True
-            Piece.All_Pieces.remove(piece)
             continue
         piece.is_taken = False
         piece.pos = piece.start_square
-    MonsterPiece.move_num = 0
+    Piece.All_Pieces = Piece.All_Pieces[:32]
+    Piece.White_Piece_List = Piece.White_Piece_List[:16]
+    Piece.Black_Piece_List = Piece.Black_Piece_List[:16]

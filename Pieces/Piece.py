@@ -94,26 +94,22 @@ class Piece(pygame.sprite.Sprite):
             king = Piece.White_Piece_List[0]
         else:
             king = Piece.Black_Piece_List[0]
-        if self.can_take(square):
-            piece = get_piece_on_square(square)
-            self.pos = square
-            piece.is_taken = True
-            if king.is_in_check():
-                self.pos = old_pos
-                piece.is_taken = False
-                return True
-            else:
-                self.pos = old_pos
-                piece.is_taken = False
-                return False
-        else:
-            self.pos = square
-            if king.is_in_check():
-                self.pos = old_pos
-                return True
-            else:
-                self.pos = old_pos
-                return False
+        needs_to_take = get_piece_on_square(square)
+        if needs_to_take:
+            taken_piece_old_pos = needs_to_take.pos
+            needs_to_take.pos = (0, 0)
+            needs_to_take.is_taken = True
+        self.pos = square
+        check = king.is_in_check()
+        if needs_to_take:
+            needs_to_take.pos = taken_piece_old_pos
+            needs_to_take.is_taken = False
+        self.pos = old_pos
+        return check
+
+
+
+
 
     def is_observed(self, square, return_piece=False):
         if self.team == 'white':
@@ -122,13 +118,10 @@ class Piece(pygame.sprite.Sprite):
             opp_piece_list = Piece.White_Piece_List
         for piece in opp_piece_list:
             observed_squares = piece.get_legal_moves(all_observed=True)
-            if not observed_squares:
-                return False
-            for sqr in observed_squares:
-                if sqr == square:
-                    if return_piece:
-                        return piece
-                    return True
+            if square in observed_squares:
+                if return_piece:
+                    return piece
+                return True
         return False
 
     def is_protected(self, square, return_piece=False):

@@ -67,6 +67,6 @@ def move_by_score(legal_move_list, move_count):
 
 
 def AI_Move(team, move_count):
-    time.sleep(0.05)
+    time.sleep(0.02)
     moves = get_all_legal_moves(team)
     return move_by_score(moves, move_count)

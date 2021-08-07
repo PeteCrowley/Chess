@@ -15,7 +15,7 @@ class King(Piece):
             self.image = pygame.transform.scale(King.WHITE_IMAGE, self.size)
         else:
             self.image = pygame.transform.scale(King.BLACK_IMAGE, self.size)
-        self.value = 99
+        self.value = 99999
 
     def get_legal_moves(self, all_observed=False):
         square = None
@@ -160,12 +160,3 @@ class King(Piece):
                 return False
         return True
 
-    def is_king_in_check_after_move(self, square):
-        old_pos = self.pos
-        self.pos = square
-        if self.is_in_check():
-            self.pos = old_pos
-            return True
-        else:
-            self.pos = old_pos
-            return False

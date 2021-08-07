@@ -47,12 +47,15 @@ def set_board(board):
 
 def reset_board():
     for piece in Piece.All_Pieces:
+        if type(piece).__name__ == 'PQueen':
+            piece.is_taken = True
+            Piece.All_Pieces.remove(piece)
+            continue
         piece.is_taken = False
         piece.pos = piece.start_square
-    return False, 0, [save_position()]
 
 
-def check_for_result(turn):
+def check_for_result(turn, pos_dict):
     result = None
     for piece in Piece.All_Pieces:
         if type(piece).__name__ == 'King' or type(piece).__name__ == 'MonsterKing':
@@ -62,7 +65,10 @@ def check_for_result(turn):
                 else:
                     result = 'White Wins'
             if piece.is_in_stalemate() and turn == piece.team:
-                result = 'Tie'
+                result = "It's a Draw"
+    for pos in pos_dict:
+        if pos_dict[pos] >= 3:
+            result = "It's a Draw"
     if result is None:
         return None
     return result
@@ -114,4 +120,13 @@ def forward_one_move(move_num, pos_history):
     return move_num, True
 
 
+def add_pos_to_dictionary(dictionary):
+    position = []
+    for piece in Piece.All_Pieces:
+        position.append((piece, piece.pos))
+    clean_pos = tuple(position)
+    if clean_pos in dictionary:
+        dictionary[clean_pos] += 1
+    else:
+        dictionary[clean_pos] = 1
 

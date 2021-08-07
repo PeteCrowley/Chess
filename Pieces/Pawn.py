@@ -1,6 +1,6 @@
 import pygame
 from Pieces.Piece import Piece, square_empty
-from Pieces.Queen import Queen
+from Pieces.Queen import PQueen
 
 
 class Pawn(Piece):
@@ -110,5 +110,5 @@ class Pawn(Piece):
 
     def promote(self, square):
         self.is_taken = True
-        queen = Queen(self.board, team=self.team)
+        queen = PQueen(self.board, team=self.team)
         queen.pos = square

@@ -22,9 +22,7 @@ class MonsterQueen(MonsterPiece):
     def get_observed(self):
         if self.is_taken:
             return []
-        moves = []
-        for square in self.board.squares:
-            moves.append(square)
+        return [square for square in self.board.squares]
 
     def get_monster_move_1(self):
         if self.is_taken:

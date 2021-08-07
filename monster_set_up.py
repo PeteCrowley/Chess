@@ -36,7 +36,10 @@ def monster_set_up(board):
 
 def monster_reset():
     for piece in Piece.All_Pieces:
+        if type(piece).__name__ == 'MonsterQueen' or type(piece).__name__ == 'PQueen':
+            piece.is_taken = True
+            Piece.All_Pieces.remove(piece)
+            continue
         piece.is_taken = False
         piece.pos = piece.start_square
     MonsterPiece.move_num = 0
-    return False, 0, [save_position()]

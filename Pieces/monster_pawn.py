@@ -67,6 +67,12 @@ class MonsterPawn(MonsterPiece):
         if y == 2 and square_empty((x, y + num)) and square_empty((x, y + num*2)):
             moves.append((x + num, y + num * 3))
             moves.append((x - num, y + num * 3))
+        if self.can_take((x + num, y + num)):
+            moves.append((x + 2*num, y + 2*num))
+            moves.append((x, y + 2*num))
+        if self.can_take((x - num, y + num)):
+            moves.append((x - num*2, y + num*2))
+            moves.append((x, y + 2 * num))
         return moves
 
     def get_monster_move_1(self):

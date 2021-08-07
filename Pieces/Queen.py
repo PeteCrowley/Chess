@@ -56,3 +56,8 @@ class Queen(Piece):
                 if not square_empty(square):
                     blocked = True
         return moves
+
+
+class PQueen(Queen):
+    def __init__(self, board, team):
+        super().__init__(board, team)
